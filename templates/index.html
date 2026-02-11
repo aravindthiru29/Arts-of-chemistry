@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Arts of Chemistry</title>
+  <link rel="stylesheet" href="../static/styles.css"/>
+</head>
+
+<body>
+
+  <div class="app">
+    <!-- HEADER -->
+    <header class="header">
+      <h1>🧪 Tiny Mix Lab</h1>
+      <p id="levelInfo">Level 1 ⭐ (Find 3 Stickers)</p>
+    </header>
+
+    <!-- MIX AREA -->
+    <section class="mix-section">
+
+      <div class="slots">
+        <div class="slot" id="slot1">?</div>
+        <div class="slot" id="slot2">?</div>
+      </div>
+
+      <button id="mixBtn">MIX!</button>
+
+      <div class="result" id="resultBox">
+        ✨ Tap two things!
+      </div>
+
+    </section>
+
+    <!-- ELEMENTS -->
+    <section class="elements-section">
+      <div class="elements">
+        <div class="element" data-name="Fire">🔥</div>
+        <div class="element" data-name="Water">💧</div>
+        <div class="element" data-name="Air">🌬</div>
+        <div class="element" data-name="Leaf">🌱</div>
+        <div class="element" data-name="Sun">☀️</div>
+        <div class="element" data-name="Ice">🧊</div>
+        <div class="element" data-name="Rain">🌧</div>
+      </div>
+    </section>
+
+    <!-- STICKER BOOK -->
+    <section class="sticker-section">
+      <h2>📖 Stickers</h2>
+
+      <div class="sticker-book">
+        <button id="prevPage">⬅</button>
+        <div class="sticker-page" id="stickerPage"></div>
+        <button id="nextPage">➡</button>
+      </div>
+
+      <p id="pageInfo">Page 1</p>
+    </section>
+
+  </div>
+
+  <!-- SOUND -->
+  <audio id="popSound" src="../static/sound/pop.mp3"></audio>
+  <audio id="dingSound" src="../static/sound/ding.mp3"></audio>
+
+  <script src="../static/script.js"></script>
+</body>
+</html>
