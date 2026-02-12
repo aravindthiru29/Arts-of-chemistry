@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Arts of chemistry</title>
-
-  <link rel="stylesheet"
-        href="{{ url_for('static', filename='styles.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#dff3ff">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400;700&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
@@ -22,6 +26,12 @@
   <p id="mascotText" class="mascot-text" aria-live="polite">
     Hi! Let’s mix something!
   </p>
+
+  <!-- STICKERS (moved here for visibility) -->
+  <div class="stickers-wrapper">
+    <h3>⭐ Stickers Found:</h3>
+    <div class="stickers" id="stickerBox" aria-live="polite"></div>
+  </div>
 
   <!-- MIX SLOTS -->
   <div class="slots">
@@ -46,18 +56,16 @@
   <h3>Pick Elements:</h3>
   <div class="elements" id="elementsGrid"></div>
 
-  <!-- STICKERS -->
-  <h3>⭐ Stickers Found:</h3>
-  <div class="stickers" id="stickerBox"></div>
+  <!-- elements remain below -->
 
   <!-- SOUND -->
-  <audio id="popSound"
-         src="{{ url_for('static', filename='sound/pop.mp3') }}"></audio>
+    <audio id="popSound" preload="none"
+      src="{{ url_for('static', filename='sound/pop.mp3') }}"></audio>
 
-  <audio id="dingSound"
-         src="{{ url_for('static', filename='sound/ding.mp3') }}"></audio>
+    <audio id="dingSound" preload="none"
+      src="{{ url_for('static', filename='sound/ding.mp3') }}"></audio>
 
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 
 </body>
 </html>
