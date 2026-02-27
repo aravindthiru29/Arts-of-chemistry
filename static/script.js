@@ -4,22 +4,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let choice1 = null;
   let choice2 = null;
   let level = 1;
-  let stickers = [];
   let discovered = [];
-  let goal = 0; // computed by current recipes
+  let goal = 0; // combos count
   const MAX_LEVEL = 10;
-
-  // mascot removed; we now provide simpler text feedback via the result box
-
   const elementsGrid = document.getElementById("elementsGrid");
-  const stickerBox = document.getElementById("stickerBox");
   const mixBtn = document.getElementById("mixBtn");
   const nextLevelBtn = document.getElementById("nextLevelBtn");
   const slot1 = document.getElementById("slot1");
   const slot2 = document.getElementById("slot2");
   const resultBox = document.getElementById("resultBox");
   const levelText = document.getElementById("levelText");
-
   const popSound = document.getElementById("popSound");
   const dingSound = document.getElementById("dingSound");
 
@@ -65,11 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
     10: { "Ether+Spirit": "🔮 Mystic", "Ether+Sun": "🌌 Nebula" }
   };
 
-  // --- helpers ---
-  // helper for computing the number of unique combinations available
+  // helper for computing total combos available up through current level
   function computeGoal() {
-    // only the combinations introduced at the current level count toward the goal
-    return Object.keys(levelRecipes[level] || {}).length;
+    let count = 0;
+    for (let i = 1; i <= level; i++) {
+      count += Object.keys(levelRecipes[i] || {}).length;
+    }
+    return count;
   }
 
   function getAvailableRecipes() {
@@ -81,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateLevelText() {
     goal = computeGoal();
     const found = discovered.length;
-    levelText.textContent = `Level ${level} ⭐ (${found}/${goal} combos)`;
+    levelText.textContent = `Level ${level} (${found}/${goal} combos)`;
   }
 
   // --- rendering ---
@@ -102,17 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     elementsGrid.appendChild(frag);
   }
 
-  function renderStickers() {
-    const frag = document.createDocumentFragment();
-    stickers.forEach(s => {
-      const d = document.createElement('div');
-      d.className = 'sticker';
-      d.textContent = s;
-      frag.appendChild(d);
-    });
-    stickerBox.innerHTML = '';
-    stickerBox.appendChild(frag);
-  }
+  // sticker rendering removed; UI simplified
 
   function renderDiscovered() {
     const list = document.getElementById('discoveredList');
@@ -129,9 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function checkGoal() {
-    if (stickers.length >= goal) {
+    if (discovered.length >= goal) {
+      levelText.textContent = `Level ${level} (${discovered.length}/${goal} combos)`;
+      nextLevelBtn.textContent = `Next Level (${level + 1})`;
       nextLevelBtn.style.display = 'block';
-      resultBox.textContent = '🎉 Level complete! Tap next to continue.';
+      nextLevelBtn.classList.add('showing');
+      resultBox.textContent = 'Level complete. Tap Next to continue.';
+      setTimeout(() => nextLevelBtn.classList.remove('showing'), 400);
     }
   }
 
@@ -195,17 +185,17 @@ document.addEventListener("DOMContentLoaded", () => {
     resultBox.classList.add('new');
     setTimeout(() => resultBox.classList.remove('new'), 300);
     if (result !== NO_MAGIC) {
-      const emoji = result.split(' ')[0];
       const currentRecipes = levelRecipes[level] || {};
       if (Object.values(currentRecipes).includes(result)) {
-        if (!stickers.includes(emoji)) stickers.push(emoji);
         if (!discovered.includes(result)) {
           discovered.push(result);
           updateLevelText();
+          resultBox.innerHTML = `<span class="discovery-message">New Discovery: ${result}</span>`;
+          resultBox.classList.add('discovery');
+          setTimeout(() => resultBox.classList.remove('discovery'), 1500);
         }
       }
     }
-    renderStickers();
     renderDiscovered();
     checkGoal();
     choice1 = null; choice2 = null; slot1.textContent = '?'; slot2.textContent = '?';
@@ -213,18 +203,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   nextLevelBtn.addEventListener('click', () => {
     if (level >= MAX_LEVEL) {
-      resultBox.textContent = '🏆 You finished all levels!';
+      resultBox.textContent = 'All levels completed.';
       return;
     }
     level++;
-    stickers = [];
-    discovered = [];
+    // keep discovered items across levels
     nextLevelBtn.style.display = 'none';
-    resultBox.textContent = '🎉 New level unlocked!';
-    updateLevelText(); renderElements(); renderStickers(); renderDiscovered();
+    resultBox.textContent = 'New level unlocked.';
+    updateLevelText(); renderElements(); renderDiscovered();
   });
 
   // INIT
-  updateLevelText(); renderElements(); renderStickers(); renderDiscovered();
+  updateLevelText(); renderElements(); renderDiscovered();
 });
  

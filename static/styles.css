@@ -50,7 +50,32 @@ body {
   text-align: center;
   /* wood‑like tabletop background inspired by Doodle God */
   background: linear-gradient(135deg, #3d291f 0%, #5e4330 100%);
+  background-size: 200% 200%;
+  animation: gradientFlow 20s ease infinite;
   color: #eeeeee;
+}
+
+/* floating particle overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 1%, transparent 20%) repeat;
+  background-size: 150px 150px;
+  animation: floatBG 30s linear infinite;
+  z-index: -1;
+}
+
+@keyframes floatBG {
+  from { background-position: 0 0; }
+  to { background-position: 150px 150px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none !important; }
+  body::after { animation: none !important; }
 }
 
 @keyframes gradientFlow {
@@ -93,6 +118,38 @@ body {
 .elements-panel h3.discovered-heading {
   margin-top: 16px;
 }
+
+/* separate panel for discovered items */
+.discovered-panel {
+  width: 260px;
+  min-width: 220px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #f9f0d9;
+  border: 3px solid #d4af37;
+  border-radius: 12px;
+  padding: 16px;
+  margin-left: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.discovered-panel h3 {
+  margin-top: 0;
+  color: #1a3a0a;
+  font-size: 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 4px;
+}
+
+@media (max-width: 800px) {
+  .elements-panel,
+  .discovered-panel,
+  .mix-area {
+    width: 100%;
+    margin: 0 0 16px 0;
+  }
+}
+
 /* custom scrollbar for panel */
 .elements-panel::-webkit-scrollbar { width: 8px; }
 .elements-panel::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
@@ -103,6 +160,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0 24px;
 }
 
 /* Responsive typography */
@@ -129,6 +187,13 @@ button {
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   transition: transform 160ms ease, box-shadow 160ms ease;
   font-weight: 600;
+  /* gentle pulse to draw attention */
+  animation: buttonPulse 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes buttonPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
 }
 
 button:hover {
@@ -176,6 +241,12 @@ button:hover {
 
 .slot.drag-over {
   outline: 3px dashed var(--accent-2);
+  animation: slotPulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes slotPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
 }
 
 .result {
@@ -194,7 +265,39 @@ button:hover {
 }
 .result.new {
   background: #fff9b0;
+  animation: flashResult 0.4s ease forwards;
 }
+
+.result.discovery {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+  animation: discoveryPulse 1.5s ease-out;
+  border: 3px solid var(--accent-1);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+}
+
+.discovery-message {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a3a0a;
+  display: block;
+  line-height: 1.6;
+}
+
+@keyframes discoveryPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(212, 175, 55, 1);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+  }
+}
+
 @keyframes flashResult {
   0% { background: #fff9b0; }
   100% { background: #f9f0d9; }
@@ -219,6 +322,7 @@ button:hover {
   align-items: center;
   cursor: grab;
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  animation: popIn 400ms ease-out;
 }
 .element:active { cursor: grabbing; }
 .element { box-shadow: 0 8px 18px rgba(2,6,23,0.06); }
@@ -242,9 +346,10 @@ button:hover {
 .discovered-item {
   background: #eee;
   color: #1a3a0a;
-  padding: 4px 8px;
+  padding: 6px 12px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   animation: popIn 400ms ease-out;
 }
@@ -301,13 +406,21 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
   background: gold;
   font-weight: bold;
   box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  transition: transform 200ms, background 200ms;
+}
+#nextLevelBtn.showing {
+  animation: popIn 400ms ease-out;
+}
+#nextLevelBtn:hover {
+  background: #ffd34d;
 }
 /* Next Level button  */
 #nextLevelBtn.fixed-bottom-right {
   position: fixed;
-  right: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: calc(24px + env(safe-area-inset-bottom));
-  width: 140px;
+  width: 150px;
   max-width: none;
   padding: 12px 14px;
   border-radius: 16px;

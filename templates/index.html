@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Arts of chemistry</title>
+  <title>Arts of Chemistry</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#dff3ff">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400;700&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- professional sans-serif fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
   <header>
-    <h1>🧪Arts of chemistry</h1>
+    <h1>Arts of Chemistry</h1>
     <h2 id="levelText"></h2>
   </header>
 
@@ -22,16 +22,15 @@
     <aside class="elements-panel">
       <h3>Elements</h3>
       <div class="elements" id="elementsGrid"></div>
-      <h3 class="discovered-heading">Discovered</h3>
+    </aside>
+
+    <aside class="discovered-panel">
+      <h3>Discovered</h3>
       <div id="discoveredList" class="discovered-list"></div>
     </aside>
 
     <main class="mix-area">
-      <!-- stickers (kept here for visibility) -->
-      <div class="stickers-wrapper">
-        <h3>⭐ Cool Sticker Collection:</h3>
-        <div class="stickers" id="stickerBox" aria-live="polite"></div>
-      </div>
+      <!-- sticker section removed for professional appearance -->
 
       <!-- MIX SLOTS -->
       <div class="slots">
@@ -40,16 +39,16 @@
       </div>
 
       <!-- MIX BUTTON -->
-      <button id="mixBtn">MIX!</button>
+      <button id="mixBtn">Mix</button>
 
       <!-- RESULT -->
       <div class="result" id="resultBox">
-        👆 Tap two items to see magic!
+        Select two elements to combine.
       </div>
 
       <!-- NEXT LEVEL -->
       <button id="nextLevelBtn" class="fixed-bottom-right" style="display:none;">
-        🎉 Next Level!
+        Next Level
       </button>
     </main>
   </div>
