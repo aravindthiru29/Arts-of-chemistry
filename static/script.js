@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let choice2 = null;
   let level = 1;
   let stickers = [];
+  let discovered = [];
   let goal = 0; // computed by current recipes
   const MAX_LEVEL = 10;
 
@@ -79,7 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateLevelText() {
     goal = computeGoal();
-    levelText.textContent = `Level ${level} ⭐ (find ${goal} new combos)`;
+    const found = discovered.length;
+    levelText.textContent = `Level ${level} ⭐ (${found}/${goal} combos)`;
   }
 
   // --- rendering ---
@@ -93,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
       div.className = 'element';
       div.dataset.name = name;
       div.textContent = icons[name];
+      div.setAttribute('draggable','true'); // allow drag & drop
       frag.appendChild(div);
     });
     elementsGrid.innerHTML = '';
@@ -111,6 +114,20 @@ document.addEventListener("DOMContentLoaded", () => {
     stickerBox.appendChild(frag);
   }
 
+  function renderDiscovered() {
+    const list = document.getElementById('discoveredList');
+    if (!list) return;
+    const frag = document.createDocumentFragment();
+    discovered.forEach(item => {
+      const d = document.createElement('div');
+      d.className = 'discovered-item';
+      d.textContent = item;
+      frag.appendChild(d);
+    });
+    list.innerHTML = '';
+    list.appendChild(frag);
+  }
+
   function checkGoal() {
     if (stickers.length >= goal) {
       nextLevelBtn.style.display = 'block';
@@ -118,13 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- event delegation for elements (single listener) ---
-  elementsGrid.addEventListener('click', (ev) => {
-    const el = ev.target.closest('.element');
-    if (!el) return;
-    const name = el.dataset.name;
+  // common selection handler used by click and drop
+  function handleSelection(name) {
     if (!name) return;
-    // do not allow the user to pick the same element twice in one combination
     if ((choice1 && choice1 === name) || (choice2 && choice2 === name)) {
       resultBox.textContent = 'Pick a different element';
       return;
@@ -133,6 +146,34 @@ document.addEventListener("DOMContentLoaded", () => {
     resultBox.textContent = `Selected: ${name}`;
     if (!choice1) { choice1 = name; slot1.textContent = icons[name]; }
     else if (!choice2) { choice2 = name; slot2.textContent = icons[name]; }
+  }
+
+  elementsGrid.addEventListener('click', (ev) => {
+    const el = ev.target.closest('.element');
+    if (!el) return;
+    handleSelection(el.dataset.name);
+  });
+
+  elementsGrid.addEventListener('dragstart', (ev) => {
+    const el = ev.target.closest('.element');
+    if (!el) return;
+    ev.dataTransfer.setData('text/plain', el.dataset.name);
+  });
+
+  [slot1, slot2].forEach(slot => {
+    slot.addEventListener('dragover', ev => {
+      ev.preventDefault();
+      slot.classList.add('drag-over');
+    });
+    slot.addEventListener('dragleave', () => {
+      slot.classList.remove('drag-over');
+    });
+    slot.addEventListener('drop', ev => {
+      ev.preventDefault();
+      slot.classList.remove('drag-over');
+      const name = ev.dataTransfer.getData('text/plain');
+      handleSelection(name);
+    });
   });
 
   // mix button
@@ -150,14 +191,22 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dingSound) dingSound.play().catch(()=>{});
       resultBox.textContent = result;
     }
+    // flash highlight
+    resultBox.classList.add('new');
+    setTimeout(() => resultBox.classList.remove('new'), 300);
     if (result !== NO_MAGIC) {
       const emoji = result.split(' ')[0];
       const currentRecipes = levelRecipes[level] || {};
       if (Object.values(currentRecipes).includes(result)) {
         if (!stickers.includes(emoji)) stickers.push(emoji);
+        if (!discovered.includes(result)) {
+          discovered.push(result);
+          updateLevelText();
+        }
       }
     }
     renderStickers();
+    renderDiscovered();
     checkGoal();
     choice1 = null; choice2 = null; slot1.textContent = '?'; slot2.textContent = '?';
   });
@@ -169,12 +218,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     level++;
     stickers = [];
+    discovered = [];
     nextLevelBtn.style.display = 'none';
     resultBox.textContent = '🎉 New level unlocked!';
-    updateLevelText(); renderElements(); renderStickers();
+    updateLevelText(); renderElements(); renderStickers(); renderDiscovered();
   });
 
   // INIT
-  updateLevelText(); renderElements(); renderStickers();
+  updateLevelText(); renderElements(); renderStickers(); renderDiscovered();
 });
  
