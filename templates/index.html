@@ -17,36 +17,40 @@
     <h1>🧪Arts of chemistry</h1>
     <h2 id="levelText"></h2>
   </header>
-  <!-- MASCOT -->
-  <div id="mascot" class="mascot" role="img" aria-label="Game mascot">
-    <span id="mascotEmoji" aria-hidden="true">🐰</span>
+
+  <div class="game-area">
+    <aside class="elements-panel">
+      <h3>Select elements and discover the magic:</h3>
+      <div class="elements" id="elementsGrid"></div>
+    </aside>
+
+    <main class="mix-area">
+      <!-- stickers (kept here for visibility) -->
+      <div class="stickers-wrapper">
+        <h3>⭐ Cool Sticker Collection:</h3>
+        <div class="stickers" id="stickerBox" aria-live="polite"></div>
+      </div>
+
+      <!-- MIX SLOTS -->
+      <div class="slots">
+        <div class="slot" id="slot1">?</div>
+        <div class="slot" id="slot2">?</div>
+      </div>
+
+      <!-- MIX BUTTON -->
+      <button id="mixBtn">MIX!</button>
+
+      <!-- RESULT -->
+      <div class="result" id="resultBox">
+        👆 Tap two items to see magic!
+      </div>
+
+      <!-- NEXT LEVEL -->
+      <button id="nextLevelBtn" class="fixed-bottom-right" style="display:none;">
+        🎉 Next Level!
+      </button>
+    </main>
   </div>
-  <p id="mascotText" class="mascot-text" aria-live="polite">
-    Hi there! Ready to play and mix some magic?
-  </p>
-  <!-- STICKERS (moved here for visibility) -->
-  <div class="stickers-wrapper">
-    <h3>⭐ Cool Sticker Collection:</h3>
-    <div class="stickers" id="stickerBox" aria-live="polite"></div>
-  </div>
-  <!-- MIX SLOTS -->
-  <div class="slots">
-    <div class="slot" id="slot1">?</div>
-    <div class="slot" id="slot2">?</div>
-  </div>
-  <!-- MIX BUTTON -->
-  <button id="mixBtn">MIX!</button>
-  <!-- RESULT -->
-  <div class="result" id="resultBox">
-    👆 Tap two items to see magic!
-  </div>
-  <!-- NEXT LEVEL -->
-  <button id="nextLevelBtn" class="fixed-bottom-right" style="display:none;">
-    🎉 Next Level!
-  </button>
-  <!-- ELEMENTS -->
-  <h3>Choose Items to Mix:</h3>
-  <div class="elements" id="elementsGrid"></div>
   <!-- SOUND -->
     <audio id="popSound" preload="none"
       src="{{ url_for('static', filename='sound/pop.mp3') }}"></audio>

@@ -20,79 +20,68 @@ html, body {
   --font-display: 'Fredoka One', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
-.mascot-text {
+/* header styling to make title stand out */
+header {
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  margin-bottom: 24px;
+}
+
+header h2 {
+  font-size: 1.4rem;
+  color: var(--accent-3);
   margin-top: 6px;
-  font-size: 18px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards;
 }
 
-/* Mascot styling and animations */
-.mascot {
-  width: 120px;
-  height: 120px;
-  margin: 10px auto 6px;
-  background: -webkit-linear-gradient(180deg,#ff0000,#cf0cab);
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 56px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  transition: transform 160ms ease, box-shadow 160ms ease;
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(-8px); }
+  to   { opacity:1; transform: translateY(0); }
 }
 
-.mascot.happy {
-  animation: mascot-bounce 700ms cubic-bezier(.22,.9,.3,1);
-}
-
-.mascot.celebrate {
-  animation: mascot-pop 1200ms ease;
-}
-
-.mascot.shake {
-  animation: mascot-shake 700ms ease-in-out;
-}
-
-@keyframes mascot-bounce {
-  0% { transform: translateY(0); }
-  30% { transform: translateY(-18px); }
-  60% { transform: translateY(0); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes mascot-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.18) rotate(-6deg); }
-  70% { transform: scale(0.98) rotate(3deg); }
-  100% { transform: scale(1) rotate(0); }
-}
-
-@keyframes mascot-shake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  60% { transform: translateX(-6px); }
-  80% { transform: translateX(4px); }
-  100% { transform: translateX(0); }
-}
+/* mascot-related styles removed for a cleaner presentation */
 
 body {
   font-family: var(--font-body);
   text-align: center;
-  background: 
-    radial-gradient(ellipse at 30% 60%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
-    radial-gradient(ellipse at 70% 30%, rgba(255, 140, 66, 0.1) 0%, transparent 40%),
-    linear-gradient(135deg, #7df42d 0%, #1a3a0a 100%);
-  background-size: 200% 200%;
-  animation: gradientFlow 10s ease infinite;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  color: #2c3e50;
+  /* wood‑like tabletop background inspired by Doodle God */
+  background: linear-gradient(135deg, #3d291f 0%, #5e4330 100%);
+  color: #eeeeee;
 }
 
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* layout helpers */
+.game-area {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.elements-panel {
+  width: 240px;
+  min-width: 200px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 12px;
+  margin-right: 20px;
+}
+
+.mix-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Responsive typography */
@@ -107,23 +96,7 @@ h1 {
 
 h3 { font-size: clamp(1rem, 3.5vw, 1.25rem); }
 
-.mascot {
-  width: 140px;
-  height: 140px;
-  margin: 6px auto 8px;
-  background: linear-gradient(135deg,var(--accent-1),var(--accent-4));
-  border-radius: 28px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 64px;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.4), 0 0 30px rgba(212, 175, 55, 0.3);
-  transition: transform 160ms ease, box-shadow 160ms ease;
-  border: 6px solid rgba(255,255,255,0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+/* old mascot rule removed */
 
 button {
   padding: 16px 40px;
@@ -164,6 +137,8 @@ button:hover {
 }
 /* slots and result styling*/
 .slots {
+  position: relative;
+}
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -181,6 +156,10 @@ button:hover {
   justify-content: center;
   align-items: center;
   box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 1px 3px rgba(255,255,255,0.3);
+}
+
+.slot.drag-over {
+  outline: 3px dashed var(--accent-2);
 }
 
 .result {
@@ -212,9 +191,10 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  cursor: grab;
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
+.element:active { cursor: grabbing; }
 .element { box-shadow: 0 8px 18px rgba(2,6,23,0.06); }
 /* Give elements playful alternating backgrounds */
 .element:nth-child(4n+1) { background: linear-gradient(135deg, #ffd700, #ffed4e); }
@@ -249,10 +229,7 @@ button:hover {
 }
 .sticker:hover { transform: translateY(-6px) rotate(-4deg) scale(1.03); box-shadow: 0 14px 28px rgba(2,6,23,0.12); }
 
-/* Mascot gentle floating animation */
-.mascot { will-change: transform; }
-.mascot-floating { animation: floaty 4000ms ease-in-out infinite; }
-@keyframes floaty { 0%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(0) } }
+/* Mascot animations removed since mascot is no longer used */
 
 /* Button micro interactions */
 button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px rgba(16,24,40,0.08); }
@@ -294,12 +271,6 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
 /* Responsive for mobile adjustments */
 @media (max-width: 480px) {
   h1 { font-size: 28px; }
-
-  .mascot {
-    width: 88px;
-    height: 88px;
-    font-size: 40px;
-  }
 
   .slots {
     flex-direction: column;

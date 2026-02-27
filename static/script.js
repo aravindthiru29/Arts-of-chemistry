@@ -5,12 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let choice2 = null;
   let level = 1;
   let stickers = [];
-  let goal = 1;
+  let goal = 0; // computed by current recipes
   const MAX_LEVEL = 10;
 
-  const mascot = document.getElementById("mascot");
-  const mascotText = document.getElementById("mascotText");
-  const emojiSpan = document.getElementById("mascotEmoji");
+  // mascot removed; we now provide simpler text feedback via the result box
 
   const elementsGrid = document.getElementById("elementsGrid");
   const stickerBox = document.getElementById("stickerBox");
@@ -67,15 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --- helpers ---
-  function mascotReact(msg, cls) {
-    mascotText.textContent = msg;
-    const map = { happy: "😄", celebrate: "🏆", surprise: "😲", wink: "😉", default: "🐰" };
-    emojiSpan.textContent = map[cls] || map.default;
-    mascot.classList.remove("happy", "celebrate", "shake");
-    void mascot.offsetWidth;
-    if (cls) mascot.classList.add(cls);
-    const timeout = cls === "celebrate" ? 1400 : 700;
-    setTimeout(() => { if (cls) mascot.classList.remove(cls); emojiSpan.textContent = map.default; }, timeout);
+  // helper for computing the number of unique combinations available
+  function computeGoal() {
+    // only the combinations introduced at the current level count toward the goal
+    return Object.keys(levelRecipes[level] || {}).length;
   }
 
   function getAvailableRecipes() {
@@ -84,7 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return all;
   }
 
-  function updateLevelText() { levelText.textContent = `Level ${level} ⭐ (Find ${goal} Stickers)`; }
+  function updateLevelText() {
+    goal = computeGoal();
+    levelText.textContent = `Level ${level} ⭐ (find ${goal} new combos)`;
+  }
 
   // --- rendering ---
   function renderElements() {
@@ -118,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function checkGoal() {
     if (stickers.length >= goal) {
       nextLevelBtn.style.display = 'block';
-      mascotReact('🎉 Level Complete!', 'celebrate');
+      resultBox.textContent = '🎉 Level complete! Tap next to continue.';
     }
   }
 
@@ -128,8 +124,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!el) return;
     const name = el.dataset.name;
     if (!name) return;
+    // do not allow the user to pick the same element twice in one combination
+    if ((choice1 && choice1 === name) || (choice2 && choice2 === name)) {
+      resultBox.textContent = 'Pick a different element';
+      return;
+    }
     if (popSound && typeof popSound.play === 'function') popSound.play().catch(()=>{});
-    mascotReact('Nice pick!', 'happy');
+    resultBox.textContent = `Selected: ${name}`;
     if (!choice1) { choice1 = name; slot1.textContent = icons[name]; }
     else if (!choice2) { choice2 = name; slot2.textContent = icons[name]; }
   });
@@ -142,20 +143,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const key2 = choice2 + '+' + choice1;
     const NO_MAGIC = 'No magic happens';
     const result = recipes[key1] || recipes[key2] || NO_MAGIC;
-    if (result === NO_MAGIC) { if (popSound) popSound.play().catch(()=>{}); mascotReact('No magic happens', 'shake'); }
-    else { if (dingSound) dingSound.play().catch(()=>{}); mascotReact('WOW! Magic Mix!', 'happy'); }
-    resultBox.textContent = result;
-    if (result !== NO_MAGIC) { const emoji = result.split(' ')[0]; if (!stickers.includes(emoji)) stickers.push(emoji); }
+    if (result === NO_MAGIC) {
+      if (popSound) popSound.play().catch(()=>{});
+      resultBox.textContent = NO_MAGIC;
+    } else {
+      if (dingSound) dingSound.play().catch(()=>{});
+      resultBox.textContent = result;
+    }
+    if (result !== NO_MAGIC) {
+      const emoji = result.split(' ')[0];
+      const currentRecipes = levelRecipes[level] || {};
+      if (Object.values(currentRecipes).includes(result)) {
+        if (!stickers.includes(emoji)) stickers.push(emoji);
+      }
+    }
     renderStickers();
     checkGoal();
     choice1 = null; choice2 = null; slot1.textContent = '?'; slot2.textContent = '?';
   });
 
   nextLevelBtn.addEventListener('click', () => {
-    if (level >= MAX_LEVEL) { mascotReact('🏆 You finished all levels!', 'celebrate'); return; }
-    level++; goal += 1; stickers = [];
-    nextLevelBtn.style.display = 'none'; resultBox.textContent = '🎉 New Level Unlocked!';
-    mascotReact('New Level!', 'celebrate'); updateLevelText(); renderElements(); renderStickers();
+    if (level >= MAX_LEVEL) {
+      resultBox.textContent = '🏆 You finished all levels!';
+      return;
+    }
+    level++;
+    stickers = [];
+    nextLevelBtn.style.display = 'none';
+    resultBox.textContent = '🎉 New level unlocked!';
+    updateLevelText(); renderElements(); renderStickers();
   });
 
   // INIT
