@@ -327,6 +327,19 @@ button:hover {
   color: #1a3a0a;
   font-weight: 700;
 }
+
+#undoBtn {
+  background: linear-gradient(90deg, #e8dcc8, #d9ccb6);
+  color: #1a3a0a;
+  font-weight: 700;
+}
+
+#undoBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  filter: grayscale(0.25);
+  transform: none;
+}
 /* slots and result styling*/
 .slots {
   position: relative;

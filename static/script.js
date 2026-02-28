@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MAX_LEVEL = 10;
   const elementsGrid = document.getElementById("elementsGrid");
   const mixBtn = document.getElementById("mixBtn");
+  const undoBtn = document.getElementById("undoBtn");
   const nextLevelBtn = document.getElementById("nextLevelBtn");
   const slot1 = document.getElementById("slot1");
   const slot2 = document.getElementById("slot2");
@@ -123,6 +124,11 @@ document.addEventListener("DOMContentLoaded", () => {
     levelText.textContent = `Level ${level} (${found}/${goal} combos)`;
   }
 
+  function updateUndoButton() {
+    if (!undoBtn) return;
+    undoBtn.disabled = !choice1 && !choice2;
+  }
+
   // --- rendering ---
   function renderElements() {
     // build fragment for fewer reflows
@@ -185,6 +191,24 @@ document.addEventListener("DOMContentLoaded", () => {
     resultBox.textContent = `Selected: ${name}`;
     if (!choice1) { choice1 = name; slot1.textContent = icons[name]; }
     else if (!choice2) { choice2 = name; slot2.textContent = icons[name]; }
+    updateUndoButton();
+  }
+
+  if (undoBtn) {
+    undoBtn.addEventListener('click', () => {
+      if (choice2) {
+        choice2 = null;
+        slot2.textContent = '?';
+        resultBox.textContent = 'Removed second selection';
+      } else if (choice1) {
+        choice1 = null;
+        slot1.textContent = '?';
+        resultBox.textContent = 'Removed first selection';
+      } else {
+        resultBox.textContent = 'Nothing to undo';
+      }
+      updateUndoButton();
+    });
   }
 
   elementsGrid.addEventListener('click', (ev) => {
@@ -250,6 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderDiscovered();
     checkGoal();
     choice1 = null; choice2 = null; slot1.textContent = '?'; slot2.textContent = '?';
+    updateUndoButton();
   });
 
   nextLevelBtn.addEventListener('click', () => {
@@ -265,6 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // INIT
+  updateUndoButton();
   updateLevelText(); renderElements(); renderDiscovered();
 });
  
