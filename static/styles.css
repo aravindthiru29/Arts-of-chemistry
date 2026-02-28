@@ -1,12 +1,10 @@
 /* Global responsive */
 *, *::before, *::after { box-sizing: border-box; }
-
 html, body {
   margin: 0;
   padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
   height: 100%;
 }
-/* Earthy magical color palette inspired by Art of Alchemy */
 :root{
   --bg-top: #6ffb11; /* deep forest green */
   --bg-bottom: #54f404; /* darker forest */
@@ -20,7 +18,7 @@ html, body {
   --font-display: 'Fredoka One', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
-/* header styling to make title stand out */
+/* header */
 header {
   padding: 20px 0;
   background: rgba(255, 255, 255, 0.95);
@@ -28,7 +26,7 @@ header {
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   margin-bottom: 24px;
   color: #1a3a0a;
-  border: 3px solid rgba(212, 175, 55, 0.3);
+  border: 2px solid rgba(212, 175, 55, 0.3); /* thinner border */
 }
 
 header h2 {
@@ -44,12 +42,10 @@ header h2 {
   to   { opacity:1; transform: translateY(0); }
 }
 
-/* mascot-related styles removed for a cleaner presentation */
-
 body {
   font-family: var(--font-body);
   text-align: center;
-  /* Vibrant gradient background for kids */
+  /* Vibrant gradient background*/
   background: linear-gradient(-45deg, #FF6EC7, #A78BFA, #60A5FA, #34D399, #FBBF24);
   background-size: 400% 400%;
   animation: gradientFlow 15s ease infinite;
@@ -58,7 +54,7 @@ body {
   position: relative;
 }
 
-/* Animated floating particles overlay */
+/* Animated floating particles */
 body::after {
   content: '';
   position: fixed;
@@ -187,9 +183,9 @@ body::after {
   flex-wrap: wrap;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px; /* reduced padding to shrink border space */
   background: rgba(255, 255, 255, 0.15);
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3); /* thinner border */
   border-radius: 20px;
   backdrop-filter: blur(10px);
   position: relative;
@@ -203,10 +199,10 @@ body::after {
   max-height: 90vh;
   overflow-y: auto;
   background: #f9f0d9;
-  border: 3px solid #d4af37;
+  border: 2px solid #d4af37;
   border-radius: 12px;
   padding: 16px;
-  margin-right: 24px;
+  margin-right: 12px; /* smaller gap */
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 .elements-panel h3 {
@@ -221,17 +217,17 @@ body::after {
   margin-top: 16px;
 }
 
-/* separate panel for discovered items */
+/* discovered items */
 .discovered-panel {
   width: 260px;
   min-width: 220px;
   max-height: 90vh;
   overflow-y: auto;
   background: #f9f0d9;
-  border: 3px solid #d4af37;
+  border: 2px solid #d4af37;
   border-radius: 12px;
   padding: 16px;
-  margin-left: 24px;
+  margin-left: 12px; /* smaller gap */
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 .discovered-panel h3 {
@@ -283,8 +279,6 @@ h1 {
 
 h3 { font-size: clamp(1rem, 3.5vw, 1.25rem); }
 
-/* old mascot rule removed */
-
 button {
   padding: 16px 40px;
   font-size: 22px;
@@ -306,16 +300,15 @@ button {
   to { transform: scale(1.08); box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 25px rgba(255, 150, 200, 0.7); }
 }
 
+@keyframes buttonPulseNoMove {
+  from { box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 0 15px rgba(255, 255, 255, 0.3); }
+  to { box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 25px rgba(255, 150, 200, 0.7); }
+}
+
 button:hover {
   opacity: 0.95;
   transform: scale(1.1);
   box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 0 30px rgba(255, 100, 180, 0.8);
-}
-  transition: opacity 150ms ease;
-  color: #ffffff;
-  background: rgba(255,255,255,0.25);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  transition: background 300ms ease, box-shadow 200ms ease;
 }
 
 #mixBtn {
@@ -337,6 +330,8 @@ button:hover {
 /* slots and result styling*/
 .slots {
   position: relative;
+  display: flex; /* ensure slots sit horizontally with spacing */
+  gap: 8px;
 }
 
 .slot {
@@ -497,9 +492,6 @@ button:hover {
   border: 2px solid rgba(255,255,255,0.2);
 }
 .sticker:hover { transform: translateY(-6px) rotate(-4deg) scale(1.03); box-shadow: 0 14px 28px rgba(2,6,23,0.12); }
-
-/* Mascot animations removed since mascot is no longer used */
-
 /* Button micro interactions */
 button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px rgba(16,24,40,0.08); }
 
@@ -511,6 +503,8 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
 }
 
 #nextLevelBtn {
+  display: block;
+  margin: 20px auto; /* center when not fixed */
   width: 85%;
   max-width: 420px;
   padding: 14px 18px;
@@ -539,6 +533,9 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
   border-radius: 16px;
 }
 
+/* Reserve space under the mix-area so fixed Next button doesn't overlap result */
+.mix-area { padding-bottom: 80px; }
+
 #nextlevelbtn:hover {
   background: #ff0303;
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
@@ -549,9 +546,11 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
 @media (max-width: 480px) {
   h1 { font-size: 28px; }
 
+  /* keep slots side-by-side even on narrow screens, wrap if needed */
   .slots {
-    flex-direction: column;
-    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
     margin: 12px;
   }
 
@@ -588,6 +587,7 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
 
   /* On small screens, center the Next button at bottom and make full-width */
   #nextLevelBtn.fixed-bottom-right {
+    position: fixed; /* ensure remains fixed */
     left: 50%;
     right: auto;
     transform: translateX(-50%);
@@ -596,6 +596,7 @@ button:active { transform: translateY(2px) scale(.995); box-shadow: 0 6px 12px r
     max-width: none;
     padding: 12px 16px;
     border-radius: 14px;
+    animation: buttonPulseNoMove 2.5s ease-in-out infinite alternate;
   }
 }
 

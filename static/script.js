@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let choice1 = null;
   let choice2 = null;
   let level = 1;
+  // each element will be {name: '🌿 Plant', recipe: 'Water+Leaf'}
   let discovered = [];
   let goal = 0; // combos count
   const MAX_LEVEL = 10;
@@ -16,6 +17,48 @@ document.addEventListener("DOMContentLoaded", () => {
   const levelText = document.getElementById("levelText");
   const popSound = document.getElementById("popSound");
   const dingSound = document.getElementById("dingSound");
+  const wrongSound = document.getElementById("wrongSound");
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = AudioCtx ? new AudioCtx() : null;
+  // optimize audio: set volumes and kick off loading early
+  if (popSound) {
+    popSound.volume = 0.6;
+    popSound.load();
+  }
+  if (dingSound) {
+    dingSound.volume = 0.6;
+    dingSound.load();
+  }
+  if (wrongSound) {
+    wrongSound.volume = 0.7;
+    wrongSound.load();
+  }
+
+  function playErrorSound() {
+    if (wrongSound && typeof wrongSound.play === 'function') {
+      wrongSound.currentTime = 0;
+      wrongSound.play().catch(()=>{});
+      return;
+    }
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.setValueAtTime(160, now + 0.12);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.14);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.28);
+  }
 
   // data
   const unlocks = {
@@ -107,7 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
     discovered.forEach(item => {
       const d = document.createElement('div');
       d.className = 'discovered-item';
-      d.textContent = item;
+      // show how it came to be
+      if (item.recipe) {
+        d.textContent = `${item.name} (${item.recipe})`;
+        d.title = `Created by mixing ${item.recipe.replace('+',' and ')}`; // tooltip
+      } else {
+        d.textContent = item.name;
+      }
       frag.appendChild(d);
     });
     list.innerHTML = '';
@@ -175,10 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const NO_MAGIC = 'No magic happens';
     const result = recipes[key1] || recipes[key2] || NO_MAGIC;
     if (result === NO_MAGIC) {
-      if (popSound) popSound.play().catch(()=>{});
+      playErrorSound();
       resultBox.textContent = NO_MAGIC;
     } else {
-      if (dingSound) dingSound.play().catch(()=>{});
+      if (dingSound && typeof dingSound.play === 'function') dingSound.play().catch(()=>{});
       resultBox.textContent = result;
     }
     // flash highlight
@@ -187,8 +236,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (result !== NO_MAGIC) {
       const currentRecipes = levelRecipes[level] || {};
       if (Object.values(currentRecipes).includes(result)) {
-        if (!discovered.includes(result)) {
-          discovered.push(result);
+        if (!discovered.find(d => d.name === result)) {
+          // figure out the recipe that produced this result (key like "Fire+Air")
+          let recipeKey = Object.keys(currentRecipes).find(k => currentRecipes[k] === result) || '';
+          discovered.push({ name: result, recipe: recipeKey });
           updateLevelText();
           resultBox.innerHTML = `<span class="discovery-message">New Discovery: ${result}</span>`;
           resultBox.classList.add('discovery');
